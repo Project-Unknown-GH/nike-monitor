@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.14"
   }
 }

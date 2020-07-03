@@ -20,8 +20,9 @@ export const compareData = async () => {
     if (allSame) return null;
     const diffs = siteData.filter(l => !(fileData.includes(l)));
     if (diffs.length > 0) {
-        fs.writeFile("./items.json", JSON.stringify(diffs, null, 4), (err: unknown) => {
+        fs.writeFile("./items.json", JSON.stringify(siteData, null, 4), (err: unknown) => {
 	    if (err) throw err;
+	    console.log("[INFO] Found diffs, writing to file");
 	});
     }
     if (diffs.length < 5 && diffs.length > 0) {

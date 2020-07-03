@@ -33,12 +33,12 @@ export const sendEmbed = (urls: string[], webhookUrl: string) => {
 	}
     }
     for (const embed of trueEmbeds) {
-    axios({
-        method: "POST",
-	url: webhookUrl,
-	data: {
-	    embeds: embed
-	}
-    });
+        axios({
+            method: "POST",
+	    url: webhookUrl,
+	    data: {
+	        embeds: embed
+	    }
+        });
     }
 };

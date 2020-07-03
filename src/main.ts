@@ -8,4 +8,5 @@ const main = async () => {
     }
 }
 
-main();
+console.log("[STATUS] Starting...");
+setInterval(main, 10000);

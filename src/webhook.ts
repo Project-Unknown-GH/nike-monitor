@@ -1,6 +1,7 @@
 import axios from "axios";
+import { getWebsiteData } from "./cheerio";
 
-const urlToEmbed = (prodUrl: string) => {
+const urlToEmbed = (prodUrl: string, cheerioData: Record<string, any>[]) => {
     const color = 0x008080;
     const title = "New upcoming product!";
     const url = "https://www.nike.com/launch?s=upcoming";
@@ -9,8 +10,27 @@ const urlToEmbed = (prodUrl: string) => {
     };
     const fields = [
         {
-            name: "Link",
-            value: `[Click here](${prodUrl})`
+            name: "**Title**",
+            value: `[${cheerioData[0].data}](${prodUrl})`,
+            inline: true
+        },
+        {
+            name: "**Style**",
+            value: `${cheerioData[1].data}`,
+            inline: true
+        },
+        {
+            name: "**Price**",
+            value: `${cheerioData[2].data}`,
+            inline: true
+        },
+        {
+            name: "**Description**",
+            value: `${cheerioData[3].data}`
+        },
+        {
+            name: "**SKU**",
+            value: `${cheerioData[4].data}`
         }
     ];
     return {
@@ -22,8 +42,10 @@ const urlToEmbed = (prodUrl: string) => {
     }
 }
 
-export const sendEmbed = (urls: string[], webhookUrl: string) => {
-    const embeds = urls.map(urlToEmbed);
+export const sendEmbed = async (urls: string[], webhookUrl: string) => {
+    const cheerioed = await Promise.all(urls.map(async l => await getWebsiteData(l)));
+    console.log(cheerioed.map(l => l.map(j => j.data)));
+    const embeds = urls.map((l, idx) => urlToEmbed(l, cheerioed[idx]));
     const trueEmbeds: Record<string, unknown>[][] = [[]];
     for (const embed of embeds) {
         if (trueEmbeds[trueEmbeds.length - 1].length < 10) {

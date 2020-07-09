@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmbed = void 0;
 const axios_1 = __importDefault(require("axios"));
+const cheerio_1 = require("./cheerio");
 const urlToEmbed = (prodUrl) => {
     const color = 0x008080;
     const title = "New upcoming product!";
@@ -26,7 +27,9 @@ const urlToEmbed = (prodUrl) => {
         footer
     };
 };
-exports.sendEmbed = (urls, webhookUrl) => {
+exports.sendEmbed = async (urls, webhookUrl) => {
+    const cheerioed = await urls.map(async (l) => await cheerio_1.getWebsiteData(l));
+    console.log(cheerioed);
     const embeds = urls.map(urlToEmbed);
     const trueEmbeds = [[]];
     for (const embed of embeds) {

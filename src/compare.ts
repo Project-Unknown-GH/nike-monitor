@@ -3,13 +3,13 @@ import fs from "fs";
 
 const getFileData = (filename: string): Promise<string> => {
     return new Promise((res, rej) => {
-        fs.readFile(filename, "utf-8", (err, data) => {
-	    if (err) {
-		rej(err);
-		throw err;
-	    }
-	    res(data);
-	});
+        fs.readFile(filename, "utf-8", (err: unknown, data: string) => {
+            if (err) {
+                rej(err);
+                throw err;
+            }
+            res(data);
+        });
     });
 }
 
@@ -21,12 +21,12 @@ export const compareData = async () => {
     const diffs = siteData.filter(l => !(fileData.includes(l)));
     if (diffs.length > 0) {
         fs.writeFile("./items.json", JSON.stringify(siteData, null, 4), (err: unknown) => {
-	    if (err) throw err;
-	    console.log("[INFO] Found diffs, writing to file");
-	});
+            if (err) throw err;
+            console.log("[INFO] Found diffs, writing to file");
+        });
     }
     if (diffs.length < 5 && diffs.length > 0) {
-         return diffs;
+        return diffs;
     }
     return null;
 }

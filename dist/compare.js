@@ -17,8 +17,8 @@ const getFileData = (filename) => {
         });
     });
 };
-exports.compareData = async () => {
-    const siteData = await index_1.requestData("b");
+exports.compareData = async (proxy) => {
+    const siteData = await index_1.requestData(proxy);
     const fileData = JSON.parse(await getFileData("./items.json"));
     const allSame = siteData.every(l => fileData.includes(l)) && fileData.every(l => siteData.includes(l));
     if (allSame)

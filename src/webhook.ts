@@ -42,8 +42,8 @@ const urlToEmbed = (prodUrl: string, cheerioData: Record<string, any>[]) => {
     }
 }
 
-export const sendEmbed = async (urls: string[], webhookUrl: string) => {
-    const cheerioed = await Promise.all(urls.map(async l => await getWebsiteData(l)));
+export const sendEmbed = async (urls: string[], webhookUrl: string, proxy: string) => {
+    const cheerioed = await Promise.all(urls.map(async l => await getWebsiteData(l, proxy)));
     console.log(cheerioed.map(l => l.map(j => j.data)));
     const embeds = urls.map((l, idx) => urlToEmbed(l, cheerioed[idx]));
     const trueEmbeds: Record<string, unknown>[][] = [[]];

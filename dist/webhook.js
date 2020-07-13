@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmbed = void 0;
 const axios_1 = __importDefault(require("axios"));
 const cheerio_1 = require("./cheerio");
-const urlToEmbed = (prodUrl) => {
+const urlToEmbed = (prodUrl, cheerioData) => {
     const color = 0x008080;
     const title = "New upcoming product!";
     const url = "https://www.nike.com/launch?s=upcoming";
@@ -15,8 +15,27 @@ const urlToEmbed = (prodUrl) => {
     };
     const fields = [
         {
-            name: "Link",
-            value: `[Click here](${prodUrl})`
+            name: "**Title**",
+            value: `[${cheerioData[0].data}](${prodUrl})`,
+            inline: true
+        },
+        {
+            name: "**Style**",
+            value: `${cheerioData[1].data}`,
+            inline: true
+        },
+        {
+            name: "**Price**",
+            value: `${cheerioData[2].data}`,
+            inline: true
+        },
+        {
+            name: "**Description**",
+            value: `${cheerioData[3].data}`
+        },
+        {
+            name: "**SKU**",
+            value: `${cheerioData[4].data}`
         }
     ];
     return {
@@ -27,10 +46,10 @@ const urlToEmbed = (prodUrl) => {
         footer
     };
 };
-exports.sendEmbed = async (urls, webhookUrl) => {
-    const cheerioed = await urls.map(async (l) => await cheerio_1.getWebsiteData(l));
-    console.log(cheerioed);
-    const embeds = urls.map(urlToEmbed);
+exports.sendEmbed = async (urls, webhookUrl, proxy) => {
+    const cheerioed = await Promise.all(urls.map(async (l) => await cheerio_1.getWebsiteData(l, proxy)));
+    console.log(cheerioed.map(l => l.map(j => j.data)));
+    const embeds = urls.map((l, idx) => urlToEmbed(l, cheerioed[idx]));
     const trueEmbeds = [[]];
     for (const embed of embeds) {
         if (trueEmbeds[trueEmbeds.length - 1].length < 10) {

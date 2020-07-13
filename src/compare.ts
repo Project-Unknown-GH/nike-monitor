@@ -1,5 +1,6 @@
 import { requestData } from "./index";
 import fs from "fs";
+import axios from "axios";
 
 const getFileData = (filename: string): Promise<string> => {
     return new Promise((res, rej) => {
@@ -11,10 +12,27 @@ const getFileData = (filename: string): Promise<string> => {
             res(data);
         });
     });
-}
+};
+
+const getProxyUrls = async () => {
+    const response = await axios({
+        method: "GET",
+        url: "https://api.projectunkn.com/api/proxies/"
+    });
+    return response.data.map((l: {proxy: string}) => l.proxy).map(proxyToUrl);
+};
+
+const proxyToUrl = (proxy: string) => {
+    const splitProxy = proxy.split(":");
+    const reorganizedProxy = [[splitProxy[2], splitProxy[3]], [splitProxy[0], splitProxy[1]]];
+    const joinedProxy = reorganizedProxy.map(l => l.join(":")).join("@");
+    return `http://${joinedProxy}`;
+};
 
 export const compareData = async () => {
-    const siteData = await requestData("b");
+    const proxies = await getProxyUrls();
+    const proxy = proxies[Math.floor(Math.random() * proxies.length)]
+    const siteData = await requestData(proxy);
     const fileData = JSON.parse(await getFileData("./items.json")) as string[];
     const allSame = siteData.every(l => fileData.includes(l)) && fileData.every(l => siteData.includes(l));
     if (allSame) return null;

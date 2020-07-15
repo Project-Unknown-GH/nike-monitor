@@ -1,9 +1,7 @@
 import axios from "axios";
 const httpsProxyAgent = require("https-proxy-agent");
 
-const apiUrl = "https://www.nike.com/sitemap-launch-en-us.xml";
-
-export const requestData = async (proxy: string): Promise<string[]> => {
+export const requestData = async (apiUrl: string, proxy: string): Promise<string[]> => {
     const response = await axios({
         method: "GET",
 		url: apiUrl,

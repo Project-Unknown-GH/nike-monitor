@@ -14,8 +14,8 @@ const getFileData = (filename: string): Promise<string> => {
     });
 };
 
-export const compareData = async (proxy: string) => {
-    const siteData = await requestData(proxy);
+export const compareData = async (apiUrl: string, proxy: string) => {
+    const siteData = await requestData(apiUrl, proxy);
     const fileData = JSON.parse(await getFileData("./items.json")) as string[];
     const allSame = siteData.every(l => fileData.includes(l)) && fileData.every(l => siteData.includes(l));
     if (allSame) return null;

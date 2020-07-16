@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getWebsiteData } from "./cheerio";
 
 const urlToEmbed = (prodUrl: string, cheerioData: Record<string, any>[]) => {
     const color = 0x008080;
@@ -42,25 +41,47 @@ const urlToEmbed = (prodUrl: string, cheerioData: Record<string, any>[]) => {
     }
 }
 
-export const sendEmbed = async (urls: string[], webhookUrl: string, proxy: string) => {
-    const cheerioed = await Promise.all(urls.map(async l => await getWebsiteData(l, proxy)));
-    console.log(cheerioed.map(l => l.map(j => j.data)));
-    const embeds = urls.map((l, idx) => urlToEmbed(l, cheerioed[idx]));
-    const trueEmbeds: Record<string, unknown>[][] = [[]];
-    for (const embed of embeds) {
-        if (trueEmbeds[trueEmbeds.length - 1].length < 10) {
-            trueEmbeds[trueEmbeds.length - 1].push(embed);
-        } else {
-            trueEmbeds.push([embed]);
+export const sendEmbed = async (data: Record<string, any>, webhookUrl: string) => {
+    const color = 0x008080;
+    const title = "New upcoming product!";
+    const url = "https://www.nike.com/launch?s=upcoming";
+    const footer = {
+        text: `Project Unknown | Powered by https://discord.gg/24TqAYj | ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}`
+    };
+    const thumbnail = {
+        url: data.productInfo[0].imageUrls.productImageUrl
+    };
+    const fields = [
+        {
+            name: "**Title**",
+            value: `[${data.productInfo[0].merchProduct.labelName}](https://nike.com/launch/t/${data.productInfo[0].productContent.slug})`,
+            inline: true
+        },
+        {
+            name: "**Style**",
+            value: `${data.productInfo[0].merchProduct.styleType}`,
+            inline: true
+        },
+        {
+            name: "**Price**",
+            value: `$${data.productInfo[0].merchPrice.fullPrice}`,
+            inline: true
+        },
+        {
+            name: "**Release date**",
+            value: `${new Date(data.productInfo[0].launchView.startEntryDate).toLocaleString("en-US", { timeZone: "America/New_York" })}`
         }
-    }
-    for (const embed of trueEmbeds) {
-        axios({
-            method: "POST",
-            url: webhookUrl,
-            data: {
-                embeds: embed
-            }
-        });
-    }
+    ];
+    const embed = { color, title, url, footer, thumbnail, fields };
+
+    console.log(embed);
+    try {
+    axios({
+        method: "POST",
+        url: webhookUrl,
+        data: {
+            embeds: [embed]
+        }
+    });
+} catch (e) { console.error(e) }
 };

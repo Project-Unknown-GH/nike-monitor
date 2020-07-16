@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmbed = void 0;
 const axios_1 = __importDefault(require("axios"));
-const cheerio_1 = require("./cheerio");
 const urlToEmbed = (prodUrl, cheerioData) => {
     const color = 0x008080;
     const title = "New upcoming product!";
@@ -46,26 +45,49 @@ const urlToEmbed = (prodUrl, cheerioData) => {
         footer
     };
 };
-exports.sendEmbed = async (urls, webhookUrl, proxy) => {
-    const cheerioed = await Promise.all(urls.map(async (l) => await cheerio_1.getWebsiteData(l, proxy)));
-    console.log(cheerioed.map(l => l.map(j => j.data)));
-    const embeds = urls.map((l, idx) => urlToEmbed(l, cheerioed[idx]));
-    const trueEmbeds = [[]];
-    for (const embed of embeds) {
-        if (trueEmbeds[trueEmbeds.length - 1].length < 10) {
-            trueEmbeds[trueEmbeds.length - 1].push(embed);
+exports.sendEmbed = async (data, webhookUrl) => {
+    const color = 0x008080;
+    const title = "New upcoming product!";
+    const url = "https://www.nike.com/launch?s=upcoming";
+    const footer = {
+        text: `Project Unknown | Powered by https://discord.gg/24TqAYj | ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}`
+    };
+    const thumbnail = {
+        url: data.productInfo[0].imageUrls.productImageUrl
+    };
+    const fields = [
+        {
+            name: "**Title**",
+            value: `[${data.productInfo[0].merchProduct.labelName}](https://nike.com/launch/t/${data.productInfo[0].productContent.slug})`,
+            inline: true
+        },
+        {
+            name: "**Style**",
+            value: `${data.productInfo[0].merchProduct.styleType}`,
+            inline: true
+        },
+        {
+            name: "**Price**",
+            value: `$${data.productInfo[0].merchPrice.fullPrice}`,
+            inline: true
+        },
+        {
+            name: "**Release date**",
+            value: `${new Date(data.productInfo[0].launchView.startEntryDate).toLocaleString("en-US", { timeZone: "America/New_York" })}`
         }
-        else {
-            trueEmbeds.push([embed]);
-        }
-    }
-    for (const embed of trueEmbeds) {
+    ];
+    const embed = { color, title, url, footer, thumbnail, fields };
+    console.log(embed);
+    try {
         axios_1.default({
             method: "POST",
             url: webhookUrl,
             data: {
-                embeds: embed
+                embeds: [embed]
             }
         });
+    }
+    catch (e) {
+        console.error(e);
     }
 };

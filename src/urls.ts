@@ -8,9 +8,9 @@ export enum Webhooks {
 }
 
 export enum Apis {
-    US = "https://www.nike.com/sitemap-launch-en-us.xml",
+    US = "https://api.nike.com/product_feed/threads/v2/?anchor=0&count=36&filter=marketplace(US),language(en),upcoming(true),channelId(010794e5-35fe-4e32-aaff-cd2c74f89d61)",
     CN = "https://www.nike.com/sitemap-launch-zh-hans-cn.xml",
-    FR = "https://www.nike.com/sitemap-launch-fr-fr.xml",
+    FR = "https://api.nike.com/product_feed/threads/v2/?anchor=0&count=21&filter=marketplace(FR),language(fr),upcoming(true),channelId(010794e5-35fe-4e32-aaff-cd2c74f89d61)",
     JP = "https://www.nike.com/sitemap-launch-ja-jp.xml",
     GB = "https://www.nike.com/sitemap-launch-en-gb.xml"
 }

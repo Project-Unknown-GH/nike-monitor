@@ -21,8 +21,9 @@ export const main = async (name: string, apiUrl: string, webhook: string) => {
     const proxies = await getProxyUrls();
     const proxy = proxies[Math.floor(Math.random() * proxies.length)];
     const data = await compareData(name, apiUrl, proxy);
+    console.log("Diffs", data);
     if (data) {
-        sendEmbed(data, webhook, proxy);
+        data.map((l: any) => sendEmbed(l, webhook));
     }
 }
 

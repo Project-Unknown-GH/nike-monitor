@@ -14,14 +14,15 @@ const getFileData = (filename: string): Promise<string> => {
     });
 };
 
-export const compareData = async (apiUrl: string, proxy: string) => {
+export const compareData = async (name: string, apiUrl: string, proxy: string) => {
+    console.log("Api URL", apiUrl);
     const siteData = await requestData(apiUrl, proxy);
-    const fileData = JSON.parse(await getFileData("./items.json")) as string[];
+    const fileData = JSON.parse(await getFileData(`./items-${name}.json`)) as string[];
     const allSame = siteData.every(l => fileData.includes(l)) && fileData.every(l => siteData.includes(l));
     if (allSame) return null;
     const diffs = siteData.filter(l => !(fileData.includes(l)));
     if (diffs.length > 0) {
-        fs.writeFile("./items.json", JSON.stringify(siteData, null, 4), (err: unknown) => {
+        fs.writeFile(`./items-${name}.json`, JSON.stringify(siteData, null, 4), (err: unknown) => {
             if (err) throw err;
             console.log("[INFO] Found diffs, writing to file");
         });

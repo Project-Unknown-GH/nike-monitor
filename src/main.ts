@@ -17,14 +17,13 @@ const proxyToUrl = (proxy: string) => {
     return `http://${joinedProxy}`;
 };
 
-export const main = async (apiUrl: string, webhook: string) => {
+export const main = async (name: string, apiUrl: string, webhook: string) => {
     const proxies = await getProxyUrls();
     const proxy = proxies[Math.floor(Math.random() * proxies.length)];
-    const data = await compareData(apiUrl, proxy);
+    const data = await compareData(name, apiUrl, proxy);
     if (data) {
         sendEmbed(data, webhook, proxy);
     }
 }
 
 console.log("[STATUS] Starting...");
-setInterval(main, 10000);

@@ -42,7 +42,7 @@ const urlToEmbed = (prodUrl: string, cheerioData: Record<string, any>[]) => {
     }
 }
 
-export const sendEmbed = async (data: Record<string, any>, webhookUrl: string) => {
+export const sendEmbed = async (data: Record<string, any>, webhookUrls: string[]) => {
     const color = 0x008080;
     const title = "New product has been loaded!";
     const url = `https://nike.com/${data.publishedContent.marketplace}/launch/t/${data.productInfo[0].productContent.slug}`;
@@ -86,13 +86,15 @@ export const sendEmbed = async (data: Record<string, any>, webhookUrl: string) =
     const embed = { color, title, url, footer, image, fields };
 
     console.log(embed);
-    try {
-        axios({
-            method: "POST",
-            url: webhookUrl,
-            data: {
-                embeds: [embed]
-            }
-        });
-    } catch (e) { console.error(e) }
+    webhookUrls.map(l => {
+        try {
+            axios({
+                method: "POST",
+                url: l,
+                data: {
+                    embeds: [embed]
+                }
+            });
+        } catch (e) { console.error(e) }
+    });
 };

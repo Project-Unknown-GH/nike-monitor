@@ -3,13 +3,21 @@ import fs from "fs";
 
 const getFileData = (filename: string): Promise<string> => {
     return new Promise((res, rej) => {
-        fs.readFile(filename, "utf-8", (err: unknown, data: string) => {
-            if (err) {
-                rej(err);
-                throw err;
-            }
-            res(data);
-        });
+        const fileExists = fs.existsSync(filename);
+        if (!fileExists) {
+            fs.writeFile(filename, "utf-8", (err: unknown) => {
+                if (err) throw err;
+                res("{}");
+            })
+        } else {
+            fs.readFile(filename, "utf-8", (err: unknown, data: string) => {
+                if (err) {
+                    rej(err);
+                    throw err;
+                }
+                res(data);
+            });
+        }
     });
 };
 

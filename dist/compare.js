@@ -8,13 +8,23 @@ const index_1 = require("./index");
 const fs_1 = __importDefault(require("fs"));
 const getFileData = (filename) => {
     return new Promise((res, rej) => {
-        fs_1.default.readFile(filename, "utf-8", (err, data) => {
-            if (err) {
-                rej(err);
-                throw err;
-            }
-            res(data);
-        });
+        const fileExists = fs_1.default.existsSync(filename);
+        if (!fileExists) {
+            fs_1.default.writeFile(filename, "utf-8", (err) => {
+                if (err)
+                    throw err;
+                res("{}");
+            });
+        }
+        else {
+            fs_1.default.readFile(filename, "utf-8", (err, data) => {
+                if (err) {
+                    rej(err);
+                    throw err;
+                }
+                res(data);
+            });
+        }
     });
 };
 exports.compareData = async (name, apiUrl, proxy) => {
